@@ -1,17 +1,21 @@
 # include LICENSE
-include README.rst
-include .coveragerc
+# include .coveragerc
+include README.md
 include .editorconfig
-include .envrc
+include .envrc*
 include *.py
-include *.rst
+include *.md
 include *.txt
 include *.ini
 include *.cfg
+recursive-include tests  *.py
+recursive-include py.requirements  *.txt
 
-recursive-include tests         *.py
-
-# DISABLED: recursive-include py.requirements  *.txt
-# -- DISABLED:
+# -- EXLCUDED-PARTS:
+exclude __*
+prune __*
+prune build
+prune dist
+prune .direnv
 prune .tox
 prune .venv*
