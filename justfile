@@ -20,7 +20,8 @@ set export := true
 # -----------------------------------------------------------------------------
 # CONFIG:
 # -----------------------------------------------------------------------------
-HERE   := justfile_directory()
+HERE := justfile_directory()
+MARKER_DIR := HERE
 PYTHON_DEFAULT := if os() == "windows" { "python" } else { "python3" }
 PYTHON := env_var_or_default("PYTHON", PYTHON_DEFAULT)
 PIP := "uv pip"
@@ -43,19 +44,15 @@ init: (_ensure-install-packages "all")
 install-packages PART="all":
     @echo "INSTALL-PACKAGES: {{PART}} ..."
     {{PIP}} install {{PIP_INSTALL_OPTIONS}} -r py.requirements/{{PART}}.txt
-    @touch "{{HERE}}/.done.install-packages.{{PART}}"
+    @touch "{{MARKER_DIR}}/.done.install-packages.{{PART}}"
 
 # ENSURE: Python packages are installed.
 _ensure-install-packages PART="all":
     #!/usr/bin/env python3
     from subprocess import run
     from os import path
-    if not path.exists("{{HERE}}/.done.install-packages.{{PART}}"):
+    if not path.exists("{{MARKER_DIR}}/.done.install-packages.{{PART}}"):
         run("just install-packages {{PART}}", shell=True)
-
-# -- SIMILAR: This solution requires a Bourne-like shell (may not work on: Windows).
-# _ensure-install-packages PART="testing":
-#   @test -e "{{HERE}}/.done.install-packages.{{PART}}" || just install-packages {{PART}}
 
 # Run tests.
 test *TESTS: (_ensure-install-packages "testing")
@@ -72,12 +69,18 @@ coverage:
 # coverage lcov
 # genhtml build/coverage.lcov --output-directory build/coverage.lcov.html --ignore-errors inconsistent
 
+# Run tox for one Python variant
+tox *ARGS: (_ensure-install-packages "use_py27")
+    tox {{ARGS}}
+
+
 # Cleanup most parts (but leave PRECIOUS parts).
 cleanup:
     - {{RMTREE}} build
     - {{RMTREE}} dist
     - {{RMTREE}} *.egg-info
     - {{RMTREE}} .pytest_cache
+    - {{RMTREE}} .ruff_cache
     - {{REMOVE}} .coverage
     - {{REMOVE}} .done.*
 

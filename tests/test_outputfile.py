@@ -1,8 +1,6 @@
 from __future__ import absolute_import, print_function
 from jinja2 import Environment
 from jinja2_outputfile import Path
-import pytest
-
 
 
 # -----------------------------------------------------------------------------
@@ -130,6 +128,7 @@ class TestVerboseMode:
         render_template(TEMPLATE4ONE_FILE, this=data, extension=self.EXTENSION)
 
         # -- THEN: the captured-output contains ... and the output-file exists
+        output_dir = output_dir.as_posix()  # -- NORMALIZE-PATH
         expected = "OUTPUTFILE: {output_dir}/example_Alice.txt ...".format(output_dir=output_dir)
         captured = capsys.readouterr()
         captured_output = captured.out.strip()
@@ -150,6 +149,7 @@ class TestVerboseMode:
         render_template(TEMPLATE4ONE_FILE, this=data, extension=self.EXTENSION)
 
         # -- THEN: the output contains ... and the output-file exists
+        output_dir = output_dir.as_posix()  # -- NORMALIZE-PATH
         expected = "OUTPUTFILE: {output_dir}/example_Bob.txt ... (CHANGED)".format(output_dir=output_dir)
         captured = capsys.readouterr()
         captured_output = captured.out.strip()
@@ -169,6 +169,7 @@ class TestVerboseMode:
         render_template(TEMPLATE4ONE_FILE, this=data, extension=self.EXTENSION)
 
         # -- THEN: the output contains ... and the output-file exists
+        output_dir = output_dir.as_posix()  # -- NORMALIZE-PATH
         expected = "OUTPUTFILE: {output_dir}/example_Charly.txt ... (SAME)".format(output_dir=output_dir)
         captured = capsys.readouterr()
         captured_output = captured.out.strip()
@@ -188,6 +189,7 @@ class TestVerboseMode:
         render_template(TEMPLATE4ONE_FILE, this=data, extension=self.EXTENSION)
 
         # -- THEN: the output contains ... and the output-file exists
+        output_dir = output_dir.as_posix()  # -- NORMALIZE-PATH
         expected = """
 OUTPUTFILE: {output_dir}/example_Doro.txt ...
 OUTPUTFILE: {output_dir}/example_Doro.txt ... (SAME)

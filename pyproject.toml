@@ -1,6 +1,7 @@
 [project]
 name = "jinja2-outputfile"
 version = "0.5.0"
+# PREPARED: dynamic = ["version"]
 description = "Jinja2 extension that redirects output to output file(s)"
 readme = "README.md"
 authors = [
@@ -39,7 +40,7 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/jenisys/jinja2-outputfile"
 Repository = "https://github.com/jenisys/jinja2-outputfile"
-Download = "https://pypi.org/project/jinja2-outputfile/"
+Download = "https://pypi.org/project/jinja2-outputfile"
 Issues = "https://github.com/jenisys/jinja2-outputfile/issues/"
 # PREPARED: Changelog = "https://github.com/jenisys/jinja2-outputfile/blob/main/CHANGES.rst"
 # PREPARED: Documentation = "https://jinja2-outputfile.readthedocs.io/en/latest/"
@@ -54,7 +55,11 @@ develop = [
     "tox   >= 3.28.0,<4.0",   # -- HINT: tox >= 4.0 has breaking changes.
     "virtualenv >= 20.26.6; python_version >= '3.7'",
     "virtualenv <  20.22.0; python_version <  '3.7'",  # -- SUPPORT FOR: Python 2.7, Python <= 3.6
-    { include-group = "test"},
+    # ONLY PY3: { include-group = "test"},
+    "pytest >= 5.0; python_version >= '3.0'",
+    "pytest <  5.0; python_version <  '3.0'", # >= 4.2
+    "pytest-html >= 2.0; python_version >= '3.0'",
+    "pytest-html < 2.0;  python_version <  '3.0'",
 ]
 test = [
     "pytest >= 5.0; python_version >= '3.0'",
@@ -64,7 +69,8 @@ test = [
 ]
 
 [build-system]
-requires = ["setuptools", "setuptools_scm", "wheel"]
+# NOT PY2: requires = ["setuptools>=64", "setuptools-scm>=8", "wheel"]
+requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 # -----------------------------------------------------------------------------
@@ -74,24 +80,29 @@ build-backend = "setuptools.build_meta"
 platforms = ["any"]
 zip-safe = true
 
-# -- DISABLED:
-# [tool.setuptools.dynamic]
-# version = {attr = "parse_type._version.version"}
-
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["jinja2_outputfile*"]
 exclude = ["tests*"]
 namespaces = false
 
-# -- SETUPTOOLS-SCM: Generate version info from git-tag(s).
-[tool.setuptools_scm]
-version_file = "jinja2_outputfile/_version.py"
+# -- DIABLED: SETUPTOOLS-SCM: Generate version info from git-tag(s).
+# [tool.setuptools_scm]
+# version_file = "jinja2_outputfile/_version.py"
 
 
 # -----------------------------------------------------------------------------
-# TOOL: coveragedirectory = build/coverage.html
+# TOOL: uv
 # -----------------------------------------------------------------------------
+# SEE: https://docs.astral.sh/uv/concepts/cache/#dynamic-metadata
+[tool.uv]
+cache-keys = [{ file = "pyproject.toml" }, { git = { commit = true, tags = true } }]
+
+
+# -----------------------------------------------------------------------------
+# TOOL: coverage
+# -----------------------------------------------------------------------------
+# SEE: https://coverage.readthedocs.io/
 [tool.coverage.run]
 source = [
     "jinja2_outputfile"

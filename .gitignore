@@ -6,9 +6,13 @@
 *$py.class
 .DS_Store
 .coverage
+.done.*
 .python-version
 __*.txt
 __*.md
+
+# -- TEMPORARY FILES:
+jinja2_outputfile/_version.py
 
 # -- TEMPORARY DIRECTORIES:
 build/
@@ -18,6 +22,7 @@ __*/
 .cache/
 .idea/
 .pytest_cache/
+.ruff_cache/
 .tox/
 .venv*/
 .vscode/

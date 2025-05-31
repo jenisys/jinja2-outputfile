@@ -24,7 +24,6 @@ import os
 from jinja2 import nodes
 from jinja2.ext import Extension as _Extension
 from ._pathlib import Path
-from ._version import __version__
 
 
 # -----------------------------------------------------------------------------
@@ -106,6 +105,7 @@ class OutputFileExtension(_Extension):
                     return
                 annotation = self.ANNOTATION_SAME
 
+        filename = Path(filename).as_posix()  # SIMPLIFY: Testing on Windows.
         print("OUTPUTFILE: {filename} ...{annotation}".format(
               filename=filename, annotation=annotation))
 

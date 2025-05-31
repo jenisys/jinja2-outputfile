@@ -1,3 +1,4 @@
 -r basic.txt
+-r packaging.txt
 -r testing.txt
 -r tox.txt
