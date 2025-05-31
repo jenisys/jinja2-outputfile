@@ -2,7 +2,7 @@
 # SEE: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 # SUPPORTED PYTHON VERSIONS: https://github.com/actions/python-versions
 
-name: tests
+name: test
 on:
   workflow_dispatch:
   push:

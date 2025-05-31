@@ -1,5 +1,10 @@
 # Outputfile Extension for the Jinja2 Template Engine
 
+[![CI Build Status](https://github.com/jenisys/jinja2-outputfile/actions/workflows/test.yml/badge.svg)](https://github.com/jenisys/jinja2-outputfile/actions/workflows/test.yml)
+[![Latest Version](https://img.shields.io/pypi/v/jinja2-outputfile.svg)](https://pypi.python.org/pypi/jinja2-outputfile)
+[![Downloads](https://img.shields.io/pypi/dm/jinja2-outputfile.svg)](https://pypi.python.org/pypi/jinja2-outputfile)
+[![License](https://img.shields.io/pypi/l/jinja2-outputfile.svg)](https://pypi.python.org/pypi/jinja2-outputfile/)
+
 Provides a [Jinja2] directive/extension that supports to redirect
 rendered template part(s) to output-file(s).
 
@@ -15,7 +20,7 @@ FEATURES:
 * Verbose mode: Prints which output-files are written and verdict (`CHANGED`, `SAME`).
 * Quiet mode: Verbose mode output is suppressed (use: `jinja_outputfile.QuietOutputFileExtension`)
 
-EXAMPLE 1: Write rendered text to an output-file
+## EXAMPLE 1: Write rendered text to an output-file
 
 ```python
 # -- FILE: example_one.py
@@ -41,7 +46,7 @@ assert output_file.exists()
 assert output_file_contents == "Hello Alice\n"
 ```
 
-EXAMPLE 2: Use multiple output-files
+## EXAMPLE 2: Use multiple output-files
 
 ```python
 # -- FILE: example.py
