@@ -1,6 +1,6 @@
 # -- FAST-PROTOTYPING: Tests on Windows -- Until tests are OK.
-# BASED ON: tests.yml
 # SUPPORTED PYTHON VERSIONS: https://github.com/actions/python-versions
+# BASED ON: test.yml
 
 name: test-windows
 on:
