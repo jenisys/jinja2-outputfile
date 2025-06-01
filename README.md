@@ -2,8 +2,8 @@
 
 [![CI Build Status](https://github.com/jenisys/jinja2-outputfile/actions/workflows/test.yml/badge.svg)](https://github.com/jenisys/jinja2-outputfile/actions/workflows/test.yml)
 [![Latest Version](https://img.shields.io/pypi/v/jinja2-outputfile.svg)](https://pypi.python.org/pypi/jinja2-outputfile)
+[![License](https://img.shields.io/pypi/l/jinja2-outputfile.svg)](https://github.com/jenisys/jinja2-outputfile/blob/main/LICENSE)
 [![Downloads](https://img.shields.io/pypi/dm/jinja2-outputfile.svg)](https://pypi.python.org/pypi/jinja2-outputfile)
-[![License](https://img.shields.io/pypi/l/jinja2-outputfile.svg)](https://pypi.python.org/pypi/jinja2-outputfile/)
 
 Provides a [Jinja2] directive/extension that supports to redirect
 rendered template part(s) to output-file(s).
