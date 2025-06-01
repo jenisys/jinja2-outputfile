@@ -27,9 +27,55 @@ from ._pathlib import Path
 
 
 # -----------------------------------------------------------------------------
-# JINJA2 EXTENSION:
+# CONSTANTS
 # -----------------------------------------------------------------------------
-class OutputFileExtension(_Extension):
+DEFAULT_ENCODING = "UTF-8"
+DEFAULT_ERRORS = None
+
+
+# -----------------------------------------------------------------------------
+# SUPPORT FUNCTIONALITY:
+# -----------------------------------------------------------------------------
+class Reporter(object):
+    ANNOTATION_CREATED = ""
+    ANNOTATION_CHANGED = " (CHANGED)"
+    ANNOTATION_SAME = " (SAME)"
+    ENCODING = DEFAULT_ENCODING
+    ERRORS = DEFAULT_ERRORS
+    OUTPUT_SCHEMA = "OUTPUTFILE: {filename} ...{annotation}"
+    SHOW_SAME = True
+
+    @classmethod
+    def report_outfile(cls, filename, contents, encoding=None, errors=None):
+        encoding = encoding or cls.ENCODING
+        errors = errors or cls.ERRORS
+        annotation = cls.ANNOTATION_CREATED
+        if filename.exists():
+            annotation = cls.ANNOTATION_CHANGED
+            this_contents = filename.read_text(encoding=encoding, errors=errors)
+            if contents == this_contents:
+                # -- CASE SAME: Show or not show output-file.
+                annotation = cls.ANNOTATION_SAME
+                if not cls.SHOW_SAME:
+                    return
+
+        # -- DISPLAY OUTPUT-FILE (and its state)
+        filename = Path(filename).as_posix()  # SIMPLIFY: Testing on Windows.
+        print(cls.OUTPUT_SCHEMA.format(filename=filename, annotation=annotation))
+
+
+class NullReporter(object):
+    """Implements the NULL design pattern: NO OUTPUT"""
+    @classmethod
+    def report_outfile(cls, filename, contents, encoding=None):
+        pass
+
+
+
+# -----------------------------------------------------------------------------
+# JINJA2 TEMPLATE EXTENSIONS:
+# -----------------------------------------------------------------------------
+class OutputFile(_Extension):
     """
     Jinja2 extension that redirects the output in its block to a file.
 
@@ -42,11 +88,7 @@ class OutputFileExtension(_Extension):
     tags = set(["outputfile"])
     ENCODING = "UTF-8"
     ERRORS = None
-    VERBOSE = True
-    ANNOTATION_CREATED = ""
-    ANNOTATION_CHANGED = " (CHANGED)"
-    ANNOTATION_SAME = " (SAME)"
-    SHOW_SAME = True
+    REPORTER_CLASS = Reporter
 
     def parse(self, parser):
         """Used by the Jinja2 parser to delegate parsing of the directive/tag.
@@ -65,6 +107,14 @@ class OutputFileExtension(_Extension):
         return nodes.CallBlock(
             self.call_method("_output_to_file", [filename, encoding]),
             [], [], body).set_lineno(lineno)
+
+    def _use_reporter(self):
+        reporter = getattr(self, "_reporter", None)
+        if reporter is None:
+            # -- NOTE: Allocate only once.
+            self._reporter = self.REPORTER_CLASS()
+            reporter = self._reporter
+        return reporter
 
     def _output_to_file(self, filename, encoding, caller):
         """
@@ -87,34 +137,21 @@ class OutputFileExtension(_Extension):
         if not basedir.is_dir():
             os.makedirs(str(basedir))
 
-        self._report_outfile(this_filename, captured_text)
+        self._use_reporter().report_outfile(this_filename, captured_text)
         this_filename.write_text(captured_text, encoding=encoding, errors=self.ERRORS)
         return ""
 
-    def _report_outfile(self, filename, contents, encoding=None):
-        if not self.VERBOSE:
-            return
 
-        encoding = encoding or self.ENCODING
-        annotation = self.ANNOTATION_CREATED
-        if filename.exists():
-            annotation = self.ANNOTATION_CHANGED
-            this_contents = filename.read_text(encoding=encoding, errors=self.ERRORS)
-            if contents == this_contents:
-                if not self.SHOW_SAME:
-                    return
-                annotation = self.ANNOTATION_SAME
-
-        filename = Path(filename).as_posix()  # SIMPLIFY: Testing on Windows.
-        print("OUTPUTFILE: {filename} ...{annotation}".format(
-              filename=filename, annotation=annotation))
-
-
-class QuietOutputFileExtension(OutputFileExtension):
+class QuietOutputFile(OutputFile):
     """
     Provides :class:OutputFileExtension directive in quiet mode.
     """
-    VERBOSE = False
+    REPORTER_CLASS = NullReporter
+
+
+# -- BACKWARD-COMPATIBLE CLASS ALIASES:
+OutputFileExtension = OutputFile
+QuietOutputFileExtension = QuietOutputFile
 
 
 class Extension(_Extension):
@@ -136,4 +173,4 @@ class Extension(_Extension):
     """
     def __init__(self, environment):
         super(Extension, self).__init__(environment)
-        environment.add_extension(OutputFileExtension)
+        environment.add_extension(OutputFile)
